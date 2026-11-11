@@ -1,0 +1,16 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const [view,...pts]=process.argv.slice(2);const a=JSON.parse(view);
+const THREE=fs.readFileSync('/home/claude/jsl/vendor/three.min.js','utf8');
+(async()=>{const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const p=await b.newPage({viewport:{width:1400,height:850}});
+await p.route('**/three*.js',r=>r.fulfill({contentType:'application/javascript',body:THREE}));
+await p.goto('file:///home/claude/jsl/index.html');await p.waitForTimeout(4000);
+await p.evaluate(a=>{const J=window.__jsl;J.CAM.auto=false;J.CAM.follow=false;J.goal.t.set(a[0],0,a[1]);J.goal.r=a[2];J.goal.th=a[3];J.goal.ph=a[4];J.cur.t.copy(J.goal.t);J.cur.r=a[2];J.cur.th=a[3];J.cur.ph=a[4]},a);await p.waitForTimeout(1200);
+const out=await p.evaluate(pts=>{const J=window.__jsl,T=J.scene.constructor?null:null;const cv=document.getElementById('cv');const r=cv.getBoundingClientRect();
+ const RC=new (J.scene.children[0].constructor.prototype.constructor===Object?Object:Object)();return null},pts);
+const res=await p.evaluate(pts=>{const J=window.__jsl;const cv=document.getElementById('cv'),r=cv.getBoundingClientRect();
+ const THREEg=window.THREE;const rc=new THREEg.Raycaster();const o=[];
+ for(const s of pts){const [px,py]=s.split(',').map(Number);const x=((px-r.left)/r.width)*2-1,y=-((py-r.top)/r.height)*2+1;rc.setFromCamera({x,y},J.camera);
+  const hits=rc.intersectObjects(J.scene.children,true).slice(0,4).map(h=>{const m=h.object,g=m.geometry.parameters||{};const wp=new THREEg.Vector3();m.getWorldPosition(wp);return `${m.geometry.type} ${g.width?[g.width,g.height,g.depth].map(v=>+v.toFixed(2)).join('x'):''} @${wp.x.toFixed(2)},${wp.y.toFixed(3)},${wp.z.toFixed(2)} col=${m.material.color?m.material.color.getHexString():'?'} sx=${m.scale.x.toFixed(2)},${m.scale.y.toFixed(2)},${m.scale.z.toFixed(2)}`});
+  o.push(s+' => '+hits.join(' | '))}return o},pts);
+console.log(res.join('\n'));await b.close()})();
