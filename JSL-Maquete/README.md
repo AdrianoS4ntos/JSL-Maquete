@@ -156,3 +156,22 @@ Testes v17: test 40, extra 12, cam 19, motion 5, features 35 — todos passando;
 Pausar congela o enquadramento; Continuar retoma; Reiniciar volta à visão geral e à etapa 1. Mexer na câmera (arrastar, roda, teclado) desliga a automática e ela não disputa; o botão "Câmera automática" reativa. O zoom se ajusta à proporção da tela. Durante a simulação a dica de controles some para não cobrir a cena.
 
 **Testes:** node `camsim.js` (21: enquadramento por etapa, caminhão nunca a >7 u da câmera, distância 15–21, triagem 8,03 s, sem saltos, pausa, manual, reativar, fluxo passo a passo) + test 40, extra 12, cam 21, motion 5, features 35, z-fighting 0. Navegador real: simulação completa (11 enquadramentos, sem erro de console) e enquadramentos nas telas 390×800, 768×1024, 1366×768 (sem rolagem horizontal). Limites: render por software (FPS real não medido); em 1920×1080 não revisei captura.
+
+## v19 — Paredes dos 4 prédios: quinas sem sobreposição
+Auditoria nova `tests/walls.js` (faces coplanares de mesma orientação, interseções parciais entre paredes/pilares/peitoris/rodapés/batentes, contato entre prédios). Ignora só faces ocultas, ou seja, encostadas em outra peça opaca ou embutidas nela. `node tests/run_all.js` roda todos os testes Node.
+
+| Problema (em `building()`) | Correção |
+|---|---|
+| Parede do fundo e parede lateral ocupavam o mesmo canto fundo-esquerdo (faces externas e topo duplicados) | O fundo é dono do canto; a lateral vai de z −1,9 a 1,9 |
+| Pilares de canto exatamente no mesmo volume das pontas das paredes (fundo-direito) e da lateral (frente-esquerdo), com cores diferentes: **z-fighting** | Parede do fundo termina na face do pilar; lateral termina na face do pilar frontal |
+| Peitoril direito, peitoris frontais e vidros entravam nos pilares, com faces no mesmo plano | Terminam nas faces dos pilares (vidro lateral D−0,4) |
+| Topo da faixa superior (y 2,10) no mesmo plano do topo das paredes e dos pilares: **z-fighting** visto de cima | Faixa com 0,20 de altura (topo 2,12); as faixas do fundo e da lateral não se cruzam mais |
+| Viga frontal e viga direita: pontas e topo coplanares com os pilares, e as duas se cruzavam na quina | Vigas entre os pilares, com a mesma espessura da parede (0,2) |
+| Frisos vermelhos com pontas coplanares com os pilares e cruzando-se na quina | Friso frontal W+0,04; friso lateral termina nele |
+| Rodapés do fundo e da lateral sobrepostos no canto | Rodapé lateral começa onde o do fundo termina |
+| Montantes dos vãos com topo no mesmo plano do friso vermelho | Altura 1,34 (encostam por baixo do friso) |
+| Caixilho das janelas: travessas e montantes com quinas sobrepostas; vidro com topo/base no plano do caixilho | Montantes inteiros, travessas e vidro entre eles; janelas do fundo em x ±2,2 (antes entravam no pilar) e topo em 1,9 (antes entravam na faixa) |
+| Marquise: topo coplanar com o friso; no Administrativo, a lateral coincidia com a face da faixa (x −3,1); postes paravam 0,2 abaixo da marquise | Marquise 1,96; friso 0,12 de altura; postes em ±0,92 com altura até a marquise |
+| Verga da porta com faces frente/trás no plano do friso | Profundidade 0,28 |
+
+Portas, vãos, posições dos prédios, rotas dos personagens e rotas do caminhão não mudaram.

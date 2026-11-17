@@ -146,24 +146,29 @@ bx(scene,36.02,.12,.12,K.red,9,-.06,20.5);bx(scene,.12,.12,36.02,K.red,27,-.06,2
 /* ===== quatro prédios independentes (fachada, janelas amplas, porta, placa) ===== */
 const GK=K.gk,BG={};
 const BCFG={dir:{x:-4.6,z:-4.6,wall:K.gd,band:K.red,dx:2,fl:0x58626e},adm:{x:3.8,z:-4.6,wall:K.blue,band:K.gm,dx:-2.1,fl:0x5d82a8},ods:{x:-4.6,z:1.6,wall:K.green,band:K.gm,dx:0,fl:0x4da36d},log:{x:3.8,z:1.6,wall:K.gm,band:K.yel,dx:1.85,fl:0x828b96}};
-function win(p,w,h,x,y,z,ax){bx(p,ax?w:.03,h,ax?.03:w,K.glass,x,y,z,{op:.6});const t=.06;bx(p,ax?w+t:.05,t,ax?.05:w+t,GK,x,y,z);bx(p,ax?w+t:.05,t,ax?.05:w+t,GK,x,y+h-t,z);bx(p,ax?t:.05,h,ax?.05:t,GK,x+(ax?-w/2:0),y,z+(ax?0:-w/2));bx(p,ax?t:.05,h,ax?.05:t,GK,x+(ax?w/2:0),y,z+(ax?0:w/2))}
-function building(id){const c=BCFG[id],x=c.x,z=c.z,W=6.1,D=4.2,H=1.9,y=.2,dx=c.dx,bg=new THREE.Group();scene.add(bg);BG[id]=bg;
+/* janela: montantes de altura total nas laterais, travessas e vidro ENTRE os montantes (sem faces coplanares nas quinas do caixilho) */
+function win(p,w,h,x,y,z,ax){const t=.06,i=w-t;bx(p,ax?i:.03,h-2*t,ax?.03:i,K.glass,x,y+t,z,{op:.6});
+ [y,y+h-t].forEach(yy=>bx(p,ax?i:.05,t,ax?.05:i,GK,x,yy,z));[-1,1].forEach(s=>bx(p,ax?t:.05,h,ax?.05:t,GK,x+(ax?s*w/2:0),y,z+(ax?0:s*w/2)))}
+/* v19: peças de canto sem sobreposição. Cada quina tem um único dono (parede do fundo no canto fundo-esquerdo; pilar nos outros três);
+   paredes, peitoris e vigas terminam na face do pilar; rodapés/faixas (revestimento, 2 cm maiores) não se cruzam entre si e
+   ficam 2 cm acima/fora das faces das paredes, nunca no mesmo plano. Auditoria: tests/walls.js */
+function building(id){const c=BCFG[id],x=c.x,z=c.z,W=6.1,D=4.2,H=1.9,y=.2,T=.2,dx=c.dx,bg=new THREE.Group();scene.add(bg);BG[id]=bg;
  bx(bg,W,.1,D,c.fl,x,.1,z);
- bx(bg,W,H,.2,c.wall,x,y,z-D/2+.1);bx(bg,.2,H,D,c.wall,x-W/2+.1,y,z);
- bx(bg,W+.04,.4,.24,GK,x,y,z-D/2+.1);bx(bg,.24,.4,D+.04,GK,x-W/2+.1,y,z);
- bx(bg,W+.08,.18,.3,c.band,x,y+H-.18,z-D/2+.1);bx(bg,.3,.18,D+.08,c.band,x-W/2+.1,y+H-.18,z);
- [-2.3,2.3].forEach(o=>win(bg,1.2,.75,x+o,y+1.0,z-D/2+.21,true));[-1,1].forEach(o=>win(bg,1.3,.8,x-W/2+.21,y+.95,z+o,false));
+ bx(bg,W-T,H,T,c.wall,x-T/2,y,z-D/2+T/2);bx(bg,T,H,D-2*T,c.wall,x-W/2+T/2,y,z);
+ bx(bg,W+.04,.4,.24,GK,x,y,z-D/2+.1);bx(bg,.24,.4,D-.2,GK,x-W/2+.1,y,z+.12);
+ bx(bg,W+.1,.2,.3,c.band,x,y+H-.18,z-D/2+.1);bx(bg,.3,.2,D-.21,c.band,x-W/2+.1,y+H-.18,z+.145);
+ [-2.2,2.2].forEach(o=>win(bg,1.2,.75,x+o,y+.95,z-D/2+.21,true));[-1,1].forEach(o=>win(bg,1.3,.8,x-W/2+.21,y+.9,z+o,false));
  const fz=z+D/2-.1,rx=x+W/2-.1;
- const seg=(a,b)=>{if(b-a<.05)return;bx(bg,b-a,.45,.2,GK,x+(a+b)/2,y,fz);bx(bg,b-a,.95,.06,K.glass,x+(a+b)/2,y+.5,fz,{op:.3})};
- seg(-W/2,dx-.55);seg(dx+.55,W/2);
- bx(bg,.2,.45,D,GK,rx,y,z);bx(bg,.06,.95,D-.2,K.glass,rx,y+.5,z,{op:.3});
- bx(bg,W,.3,.22,c.wall,x,y+1.6,fz);bx(bg,W,.06,.24,K.red,x,y+1.54,fz);bx(bg,.22,.3,D,c.wall,rx,y+1.6,z);bx(bg,.24,.06,D,K.red,rx,y+1.54,z);
- for(let i=0;i<5;i++){const px=-W/2+1.525*i;if(i>0&&i<4&&Math.abs(px-dx)>.6)bx(bg,.1,1.4,.1,GK,x+px,y+.2,fz)}
- for(let i=1;i<4;i++)bx(bg,.1,1.4,.1,GK,rx,y+.2,z-D/2+1.05*i);
- [[x+W/2-.1,z+D/2-.1],[x-W/2+.1,z+D/2-.1],[x+W/2-.1,z-D/2+.1]].forEach(([a,b])=>bx(bg,.2,H,.2,GK,a,y,b));
+ const seg=(a,b)=>{if(b-a<.05)return;bx(bg,b-a,.45,T,GK,x+(a+b)/2,y,fz);bx(bg,b-a,.95,.06,K.glass,x+(a+b)/2,y+.5,fz,{op:.3})};
+ seg(-W/2+T,dx-.55);seg(dx+.55,W/2-T);
+ bx(bg,T,.45,D-2*T,GK,rx,y,z);bx(bg,.06,.95,D-2*T,K.glass,rx,y+.5,z,{op:.3});
+ bx(bg,W-2*T,.3,T,c.wall,x,y+1.6,fz);bx(bg,W+.04,.06,.24,K.red,x,y+1.54,fz);bx(bg,T,.3,D-2*T,c.wall,rx,y+1.6,z);bx(bg,.24,.06,D-.42,K.red,rx,y+1.54,z-.01);
+ for(let i=0;i<5;i++){const px=-W/2+1.525*i;if(i>0&&i<4&&Math.abs(px-dx)>.6)bx(bg,.1,1.34,.1,GK,x+px,y+.2,fz)}
+ for(let i=1;i<4;i++)bx(bg,.1,1.34,.1,GK,rx,y+.2,z-D/2+1.05*i);
+ [[x+W/2-.1,z+D/2-.1],[x-W/2+.1,z+D/2-.1],[x+W/2-.1,z-D/2+.1]].forEach(([a,b])=>bx(bg,T,H,T,GK,a,y,b));
  [-1,1].forEach(s=>{bx(bg,.1,1.55,.22,K.red,x+dx+s*.55,y,fz);const p=new THREE.Group();p.position.set(x+dx+s*.5,y,fz);p.rotation.y=s*1.25;bg.add(p);bx(p,.5,1.4,.04,K.glass,-s*.25,0,0,{op:.5});bx(p,.5,.05,.05,K.red,-s*.25,.7,0)});
- bx(bg,1.2,.14,.24,K.red,x+dx,y+1.5,fz);
- bx(bg,2.0,.08,.85,GK,x+dx,y+1.75,fz+.42);bx(bg,2.0,.1,.06,K.red,x+dx,y+1.73,fz+.85);[-.95,.95].forEach(s=>bx(bg,.06,1.65,.06,GK,x+dx+s,.1,fz+.8));
+ bx(bg,1.2,.14,.28,K.red,x+dx,y+1.5,fz);
+ bx(bg,1.96,.08,.85,GK,x+dx,y+1.75,fz+.42);bx(bg,2.0,.12,.06,K.red,x+dx,y+1.73,fz+.85);[-.92,.92].forEach(s=>bx(bg,.06,1.85,.06,GK,x+dx+s,.1,fz+.8));
  bx(bg,1.6,.06,.5,0x9aa0a8,x+dx,.1,fz+.35)}
 Object.keys(BCFG).forEach(building);
 const hub=new THREE.Mesh(new THREE.CylinderGeometry(.65,.65,.03,32),new THREE.MeshBasicMaterial({color:K.red,transparent:true,opacity:.35}));hub.position.set(-.4,.13,-1.5);scene.add(hub);
@@ -652,7 +657,7 @@ bars.forEach((b,i)=>b.scale.y+=(Math.max(.03,odsT*HT[i])-b.scale.y)*Math.min(1,s
 for(const id in S){const s=S[id],on=active.has(s.p||id);s.e=(s.e||0)+((on?1:0)-(s.e||0))*Math.min(1,dt*4);s.pm.emissiveIntensity=s.e*(.35+.15*Math.sin(t*3));s.edge.visible=s.e>.08;const k=1+.12*s.e,w=s.w*k;s.sp.scale.x+=(w-s.sp.scale.x)*.15;s.sp.scale.y+=(w*.1625-s.sp.scale.y)*.15}
 packets.forEach(p=>p.m.position.x=(((ST*.3+p.o)%1)-.5)*p.L);flowT+=dt;{const fa=Math.min(1,flowT/.7);flowG.traverse(o=>{if(o.material)o.material.opacity=fa})}Object.keys(TK).forEach(id=>TK[id].hl.visible=(mode==='tru'&&sel===id)||(id==='tk1'&&(mode==='flow'&&FS.i===3||mode==='col')));
 hudUpdate();renderer.render(scene,cam)})();
-window.__jsl={camera:cam,setTri(v){triT=v;triApply()},PR,PRS,presStart,presEnd,presGo,presPause,hudVals,triApply,get triT(){return triT},CAT,goal,cur,CAM,KEYS,FS,SIM,CL,f2,main,CHS,GV,ARM,GX,scene,get mode(){return mode},simStart,simPause,simResume,simRestart,goStep,inB};
+window.__jsl={camera:cam,setTri(v){triT=v;triApply()},PR,PRS,presStart,presEnd,presGo,presPause,hudVals,triApply,get triT(){return triT},CAT,goal,cur,CAM,KEYS,FS,SIM,CL,f2,main,CHS,GV,ARM,GX,scene,BG,get mode(){return mode},simStart,simPause,simResume,simRestart,goStep,inB};
 ui();
 }
 </script></body></html>
