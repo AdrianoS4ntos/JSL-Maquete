@@ -318,8 +318,14 @@ lw.traverse(o=>{if(o.isMesh&&!o.userData.sector){o.userData.sector='log';clickab
 for(const id in S){S[id].sp.userData.sector=S[id].p||id;clickable.push(S[id].sp)}
 
 /* ===== rua de coleta + supermercado (mesma plataforma, lado direito) ===== */
-const R2=[[9.3,3.6],[9.3,13.2,7.5,'S'],[9.3,16.4],[7.6,16.4],[7.6,5.8],[9.3,5.8],[9.3,3.6,.1,'H']];
-for(let i=1;i<R2.length;i++){const a=R2[i-1],b=R2[i],L=Math.hypot(b[0]-a[0],b[1]-a[1])+1.2,r=bx(lw,L,.014,1.2,0x2b3038,(a[0]+b[0])/2,G,(a[1]+b[1])/2);r.rotation.y=-Math.atan2(b[1]-a[1],b[0]-a[0])}
+/* circuito de sentido único contornando o supermercado (coordenadas locais do lw; mundo.x = local.x + 2.2):
+   base → rua de ligação → avenida (leste) → lateral leste do supermercado (norte) → corredor do estacionamento (oeste)
+   → rua de ligação (sul), parada junto às lixeiras da Área de Coleta → base */
+const R2=[[9.3,3.6],[9.3,9.3],[18.6,9.3],[18.6,16.2],[7.6,16.2],[7.6,13.2,7.5,'S'],[7.6,5.8],[9.3,5.8],[9.3,3.6,.1,'H']];
+/* asfalto do circuito: só nos trechos ainda sem pavimento (lateral leste, local x 18.05–19.2), recortado para não sobrepor
+   a avenida (z ≤ 10), o estacionamento lateral (x ≥ 18.6, z 10.5–14.7), o estacionamento frontal (z ≥ 15.6) nem a base do
+   supermercado (x ≤ 18.05); topo em G+.014, abaixo dos demais pisos (G+.02), sem faces coplanares de topo */
+[[18.05,19.2,10,10.5],[18.05,18.6,10.5,14.7],[18.05,19.2,14.7,15.6]].forEach(([x0,x1,z0,z1])=>bx(lw,x1-x0,.014,z1-z0,0x2b3038,(x0+x1)/2,G,(z0+z1)/2));
 
 
 zone('zm',10.95,13.2,1.2,3.4,0x7d828a,'ÁREA DE COLETA',2.2,2.9,10.95,13.2);S.zm.p='sup';
@@ -332,9 +338,9 @@ function mkFollower(R0,onStop,spd,rad){const R=rad?smoothRoute(R0,rad):R0;const 
   if(end-f.d<.02){f.d=end;if(f.k<sp.length){const p=R[sp[f.k++]];f.w=p[2];f.v=0;onStop(p[3])}else{f.done=true;f.run=false}}};
  return f}
 const fm=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
-const CLS=[['SAÍDA DA BASE','O caminhão sai da base operacional da JSL e entra na rua.'],['PERCURSO PELA RUA','Segue pela rua de coleta até o supermercado.'],['CHEGADA AO SUPERMERCADO','Para na área de coleta de resíduos do estabelecimento.'],['COLETA DOS RESÍDUOS','Os resíduos, já separados por categoria, são conferidos e carregados.'],['RETORNO PELA RUA','O caminhão volta pela mesma rua com a carga.'],['CHEGADA À BASE','O caminhão estaciona no ponto de partida e a coleta é concluída (simulação).']];
+const CLS=[['SAÍDA DA BASE','O caminhão sai da base operacional da JSL e entra na rua.'],['PERCURSO PELA RUA','Segue pela avenida e contorna o supermercado no circuito de sentido único.'],['CHEGADA AO SUPERMERCADO','Para na área de coleta de resíduos do estabelecimento.'],['COLETA DOS RESÍDUOS','Os resíduos, já separados por categoria, são conferidos e carregados.'],['RETORNO PELA RUA','O caminhão completa o circuito pela rua de ligação e volta à base com a carga.'],['CHEGADA À BASE','O caminhão estaciona no ponto de partida e a coleta é concluída (simulação).']];
 const CL={on:false,ph:-1,s:false,tS:0,cl:0};
-const f2=mkFollower(R2,id=>{if(id==='S'){CL.s=true;CL.tS=0}else CL.on=false},2.0,1.2);
+const f2=mkFollower(R2,id=>{if(id==='S'){CL.s=true;CL.tS=0}else CL.on=false},2.6,1.2);
 function flyV(a,b,c){const m=new THREE.Mesh(new THREE.BoxGeometry(.4,.4,.4),mt(c));scene.add(m);FLT.push({m,a,b,t:0})}
 CL.reset=()=>{f2.reset();CL.on=false;CL.ph=-1;CL.s=false;CL.cl=0;ct2.forEach(g=>g.scale.setScalar(1));FLT.splice(0).forEach(f=>scene.remove(f.m));dest.material.color.setHex(K.red);if(typeof OP2!=='undefined'){OP2.ext=null;OP2.vis=true}};
 CL.start=()=>{CL.reset();CL.on=true;f2.w=1.2;f2.run=true;CL.ph=0};
@@ -343,11 +349,11 @@ CL.update=dt=>{if(CL.ph<0)return;if(CL.on)main.g.rotation.y+=fm(main.g.rotation.
  if(CL.s){CL.tS+=dt;if(f2.w<=0&&CL.tS>.3)CL.s=false;
   if(CL.tS>2.6+CL.cl*1.1&&CL.cl<4){const g=ct2[CL.cl];flyV(g.getWorldPosition(new THREE.Vector3()),main.g.localToWorld(new THREE.Vector3(-.4,1.7,0)),g.children[0].material.color.getHex());CL.cl++}}
  ct2.forEach((g,i)=>g.scale.setScalar(Math.max(.001,g.scale.x+((i<CL.cl?.001:1)-g.scale.x)*Math.min(1,dt*5))));
- const ph=f2.k>=2?5:f2.k===0?(f2.d<4?0:1):CL.s?(CL.tS<2.6?2:3):4;
+ const ph=f2.k>=2?5:f2.k===0?(f2.d<5.5?0:1):CL.s?(CL.tS<2.6?2:3):4;
  if(ph!==CL.ph){CL.ph=ph;if(mode==='flow')active=new Set(ph===2||ph===3?['log','sup']:['log']);if(mode==='flow')ui();
-  if(ph===1||ph===4)OP2.vis=false;if(ph===2){OP2.vis=true;OP2.ext={at:[11.8,12],m:'idle',yaw:-Q}}
+  if(ph===1||ph===4)OP2.vis=false;if(ph===2){OP2.vis=true;OP2.ext={at:[8.4,12],m:'idle',yaw:Q}}
   if(ph===5){got.add('A').add('B');triT=0;OP2.ext=null;OP2.vis=true;OP2.i=-1;nxt(OP2)}}
- if(CL.ph===3)OP2.ext={at:[11.8,12+clamp((CL.tS-2.6)/1.1,0,3)*.8],m:'bend',yaw:-Q,prop:'box'};if(CL.ph===2&&OP2.ext)OP2.ext.at=[11.8,12]};
+ if(CL.ph===3)OP2.ext={at:[8.4,12+clamp((CL.tS-2.6)/1.1,0,3)*.8],m:'bend',yaw:Q,prop:'box'};if(CL.ph===2&&OP2.ext)OP2.ext.at=[8.4,12]};
 
 /* ===== personagens (blocos geométricos, cabeça grande, luvas/botas escuras — padrão da imagem de referência) ===== */
 const KC={vest:0xa8e63a,stripe:0xf4f7ec,helm:0xf5e51a,glove:0x1c1d20,boot:0x3a2f2a};
@@ -431,7 +437,9 @@ function car(x,z,c,yaw){const g=new THREE.Group();g.position.set(x,G,z);g.rotati
 function decoTruck(x,z,cab){const g=new THREE.Group();g.position.set(x,G,z);g.rotation.y=Math.PI/2;scene.add(g);
  bx(g,2.7,.15,.9,0x33363b,0,.325,0);bx(g,1.9,1.05,1.05,0xe3e5e8,-.4,.475,0);bx(g,1.92,.12,1.07,K.red,-.4,.64,0);bx(g,.8,.8,1.05,cab,.95,.48,0);bx(g,.05,.4,.85,K.glass,1.36,.8,0,{op:.85});[-1,-.45,1].forEach(wx=>[.5,-.5].forEach(wz=>wheel(g,wx,wz,.22)))}
 /* avenida (leste-oeste) com faixas, calçadas e faixa de pedestres */
-bx(scene,35.6,.02,2.6,ASF,9,G,8.7);[7.2,10.2].forEach(z=>{bx(scene,18,.02,.4,0xa3a6ab,.2,G,z);bx(scene,14.7,.02,.4,0xa3a6ab,19.45,G,z)});
+bx(scene,35.6,.02,2.6,ASF,9,G,8.7);[7.2,10.2].forEach(z=>bx(scene,18,.02,.4,0xa3a6ab,.2,G,z));bx(scene,14.7,.02,.4,0xa3a6ab,19.45,G,7.2);
+/* calçada norte interrompida (x 20.25–21.4) na entrada do circuito do supermercado */
+bx(scene,8.15,.02,.4,0xa3a6ab,16.175,G,10.2);bx(scene,5.4,.02,.4,0xa3a6ab,24.1,G,10.2);
 for(let x=-8;x<26.5;x+=2){if((x+.45>9.1&&x-.45<12.2)||(x+.45>-4.75&&x-.45<1.35))continue;bx(scene,.9,.01,.1,K.yel,x,G+.025,8.7)}
 for(let i=0;i<6;i++)bx(scene,.28,.01,2.2,K.white,-1.4+i*.45,G+.025,8.7);
 for(let i=0;i<5;i++)bx(scene,.3,.01,2.2,K.white,-4.4+i*.5,G+.025,8.7);
@@ -466,11 +474,13 @@ const SM=new THREE.Group();scene.add(SM);
  bx(SM,2.2,.08,.8,GK,sx,y0+1.5,fz+.42);bx(SM,2.2,.05,.06,K.red,sx,y0+1.5,fz+.8);[-1,1].forEach(d=>bx(SM,.07,1.4,.07,GK,sx+d,y0,fz+.78));
  [-.8,.8].forEach(d=>{bx(SM,.05,.95,1.2,K.glass,sx+sw/2+.03,y0+.35,sz+d,{op:.7});bx(SM,.07,.06,1.3,GK,sx+sw/2+.03,y0+.3,sz+d)});
  bx(SM,.08,1.5,1.4,0x3b4149,sx-sw/2-.02,y0,sz);bx(SM,.1,.1,1.6,K.yel,sx-sw/2-.03,y0+1.5,sz);[-.75,.75].forEach(d=>bx(SM,.1,1.5,.1,K.yel,sx-sw/2-.03,y0,sz+d));
- bx(scene,6.4,.025,1.0,SW,sx,G,fz+.5);bx(scene,6.4,.01,.08,K.yel,sx,G+.025,fz+1.02);
- bin(15,15.05,0x3a6fc9);bin(15.35,15.05,K.green);bin(20.2,15.05,K.yel);lamp(14.4,15.2);lamp(20.7,15.2);
- fence(12.9,11.3,14.2,11.3);fence(12.9,15.1,14.2,15.1);fence(14.2,11,20.8,11)}
+ /* calçada frontal termina em x=20.25 (borda da base), liberando a faixa leste do circuito */
+ bx(scene,5.95,.025,1.0,SW,17.275,G,fz+.5);bx(scene,5.95,.01,.08,K.yel,17.275,G+.025,fz+1.02);
+ /* lixeira amarela, poste e cerca recuados para liberar a curva do circuito (x=20.8) */
+ bin(15,15.05,0x3a6fc9);bin(15.35,15.05,K.green);bin(19.5,15.05,K.yel);lamp(14.4,15.2);lamp(19.9,15.2);
+ fence(12.9,11.3,14.2,11.3);fence(12.9,15.1,14.2,15.1);fence(14.2,11,19.6,11)}
 /* mobiliário urbano */
-[[-7,7.1],[-1,7.1],[5,7.1],[14,10.5],[20,10.5],[25,10.5],[-8,14],[7,20],[24,-3],[-8.2,-1.5],[-.4,-7.6],[7.2,-2.6],[-8,4.5],[2,-13]].forEach(([x,z])=>lamp(x,z));
+[[-7,7.1],[-1,7.1],[5,7.1],[14,10.5],[19.4,10.5],[25,10.5],[-8,14],[7,20],[24,-3],[-8.2,-1.5],[-.4,-7.6],[7.2,-2.6],[-8,4.5],[2,-13]].forEach(([x,z])=>lamp(x,z));
 bench(-2,6.3);bench(2.6,6.3);bench(-4,12);bench(1,17);bin(-1.2,6.2,K.green);bin(3.4,6.2,0x3a6fc9);
 /* cercas vivas nas bordas da plataforma */
 bx(scene,35.4,.4,.5,0x228b3b,9,G,20.25);bx(scene,35.4,.4,.5,0x228b3b,9,G,-15.25);bx(scene,.5,.4,35.4,0x228b3b,26.75,G,2.5);bx(scene,.5,.4,35.4,0x228b3b,-8.75,G,2.5);
@@ -486,11 +496,14 @@ function fence(x1,z1,x2,z2){const L=Math.hypot(x2-x1,z2-z1),n=Math.max(1,Math.ro
  bx(scene,ax?L:.05,.03,ax?.05:L,K.red,(x1+x2)/2,G+.8,(z1+z2)/2)}
 /* ruas de ligação base ↔ avenida ↔ supermercado (mesmas coordenadas da rota do caminhão) */
 bx(scene,2.9,.02,14.7,ASF,10.65,G,12.55);[5.8,11,12,13,14,15].forEach(z=>bx(scene,.08,.01,.5,K.yel,10.65,G+.025,z));bx(scene,8.7,.02,3.2,ASF,13.55,G,3.6);
-[[11.5,6.4,PI],[11.5,12,PI],[11.5,14.6,PI]].forEach(([x,z,r])=>arrow(x,z,r,0xffffff,.7));[[9.8,14,0],[9.8,11,0],[9.8,7.2,0]].forEach(([x,z,r])=>arrow(x,z,r,0xffffff,.7));
+[[11.5,6.4,PI],[11.5,12,0],[11.5,14.6,0]].forEach(([x,z,r])=>arrow(x,z,r,0xffffff,.7));
+/* setas de sentido único do circuito (norte pela lateral leste, oeste pelo corredor do estacionamento) */
+[[20.8,11.0,PI],[20.8,14.2,PI],[17.6,16.2,PI/2],[13.6,16.2,PI/2]].forEach(([x,z,r])=>arrow(x,z,r,0xffffff,.7));[[9.8,14,0],[9.8,11,0],[9.8,7.2,0]].forEach(([x,z,r])=>arrow(x,z,r,0xffffff,.7));
 gtxt('SAÍDA',1.1,.4,11.5,5.2,'#2b3038','#f2c230');gtxt('ENTRADA',1.1,.4,9.8,6.9,'#2b3038','#f2c230');
 bx(scene,2.9,.01,.12,K.yel,10.65,G+.02,6.5);bx(scene,2.9,.01,.12,K.yel,10.65,G+.02,15.8);
 /* avenida: setas por faixa */
-[-6.5,4,15,22].forEach(x=>arrow(x,8.1,-Math.PI/2,0xffffff,.8));[-6,5,16.5,23].forEach(x=>arrow(x,9.3,Math.PI/2,0xffffff,.8));
+/* faixa z=9.3 no sentido leste (mão do circuito do caminhão); faixa z=8.1 no sentido oeste */
+[-6.5,4,15,22].forEach(x=>arrow(x,8.1,Math.PI/2,0xffffff,.8));[-6,5,16.5,23].forEach(x=>arrow(x,9.3,-Math.PI/2,0xffffff,.8));
 /* vagas dos caminhões (pátio) */
 [10.75,12.525,14.325,15.875,17.4].forEach(x=>bx(scene,.08,.01,3,K.yel,x,G+.02,3.6));
 ['T1','T2','T3','T4'].forEach((t,i)=>gtxt(t,.7,.35,[11.5,13.55,15.1,16.65][i],5.0,'#2b3038','#ffffff'));

@@ -26,7 +26,7 @@ ok(dur(3)>15,'etapa 4 mais longa ('+dur(3).toFixed(1)+' s)');
 ok(maxJump<0.25,'sem teletransporte: salto máx por frame '+maxJump.toFixed(3));
 // parada no supermercado
 const st=pathPts.filter(p=>p[5]===2||p[5]===3);const sp=st[0];
-ok(st.length>0&&Math.abs(sp[1]-11.5)<.2&&Math.abs(sp[2]-13.2)<.2,'parou no ponto de coleta ('+sp.slice(1,3).map(v=>v.toFixed(2))+')');
+ok(st.length>0&&Math.abs(sp[1]-9.8)<.2&&Math.abs(sp[2]-13.2)<.2,'parou no ponto de coleta ('+sp.slice(1,3).map(v=>v.toFixed(2))+')');
 ok(st.length*DT>6,'tempo parado/coletando '+(st.length*DT).toFixed(1)+' s');
 const fin=pos();ok(Math.hypot(fin[0]-p0[0],fin[1]-p0[1])<.2,'retorna à base ('+fin.map(v=>v.toFixed(2))+')');
 ok(J.CL.cl===4,'4 categorias coletadas');
