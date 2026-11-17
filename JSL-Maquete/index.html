@@ -167,7 +167,7 @@ function building(id){const c=BCFG[id],x=c.x,z=c.z,W=6.1,D=4.2,H=1.9,y=.2,T=.2,d
  for(let i=1;i<4;i++)bx(bg,.1,1.34,.1,GK,rx,y+.2,z-D/2+1.05*i);
  [[x+W/2-.1,z+D/2-.1],[x-W/2+.1,z+D/2-.1],[x+W/2-.1,z-D/2+.1]].forEach(([a,b])=>bx(bg,T,H,T,GK,a,y,b));
  [-1,1].forEach(s=>{bx(bg,.1,1.55,.22,K.red,x+dx+s*.55,y,fz);const p=new THREE.Group();p.position.set(x+dx+s*.5,y,fz);p.rotation.y=s*1.25;bg.add(p);bx(p,.5,1.4,.04,K.glass,-s*.25,0,0,{op:.5});bx(p,.5,.05,.05,K.red,-s*.25,.7,0)});
- bx(bg,1.2,.14,.28,K.red,x+dx,y+1.5,fz);
+ bx(bg,1.22,.14,.28,K.red,x+dx,y+1.5,fz);
  bx(bg,1.96,.08,.85,GK,x+dx,y+1.75,fz+.42);bx(bg,2.0,.12,.06,K.red,x+dx,y+1.73,fz+.85);[-.92,.92].forEach(s=>bx(bg,.06,1.85,.06,GK,x+dx+s,.1,fz+.8));
  bx(bg,1.6,.06,.5,0x9aa0a8,x+dx,.1,fz+.35)}
 Object.keys(BCFG).forEach(building);
@@ -200,7 +200,7 @@ bx(R.dir,1.8,.07,.9,0xb4bac2,0,F+.585,.35);[-.8,.8].forEach(d=>bx(R.dir,.07,.6,.
 chair(R.dir,-.6,1.3);chair(R.dir,.6,1.3);chair(R.dir,-.6,-.5);chair(R.dir,.6,-.5);cab(R.dir,-2.4,-1.5);cab(R.dir,2.4,-1.5);
 /* ADMINISTRATIVO: RH, Financeiro, Jurídico, Compras, Tecnologia */
 [['RH',-1.9,-.85],['FINANCEIRO',0,-.85],['JURÍDICO',1.9,-.85],['COMPRAS',-.95,.75],['TECNOLOGIA',.95,.75]].forEach(([n,x,z],i)=>{
- bx(R.adm,1.7,.02,1.4,i%2?0xa9aeb6:0x9aa0a9,x,F,z);desk(R.adm,x,z);chair(R.adm,x,z+.75);bx(R.adm,.3,.04,.22,i%2?K.red:K.gm,x+.45,F+.655,z+.12);
+ bx(R.adm,1.68,.02,1.4,i%2?0xa9aeb6:0x9aa0a9,x,F,z);desk(R.adm,x,z);chair(R.adm,x,z+.75);bx(R.adm,.3,.04,.22,i%2?K.red:K.gm,x+.45,F+.655,z+.12);
  const l=label(n,1.25);l.position.set(x,1.55,z);R.adm.add(l)});
 [-.95,.95].forEach(x=>bx(R.adm,.06,.6,1.3,CONCRETE,x,F,-.85));bx(R.adm,.06,.6,1.2,CONCRETE,0,F,.75);cab(R.adm,-2.5,-1.5,.5);cab(R.adm,2.5,.8,.5);
 /* JSL ODS (proposta acadêmica): atendimento, plantas e painel de resultados com barras animadas */
