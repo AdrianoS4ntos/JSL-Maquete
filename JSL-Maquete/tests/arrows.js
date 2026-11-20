@@ -1,3 +1,0 @@
-const {load,THREE}=require('./mock.js');const h=load(process.argv[2]);const J=h.J;
-J.scene.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.kind==='shape'){const p=o.localToWorld(new THREE.Vector3());console.log('arrow',p.x.toFixed(2),p.y.toFixed(3),p.z.toFixed(2),'rotZ',o.rotation.z.toFixed(2),'sc',o.scale.x)}});
-J.scene.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.kind==='box'){const a=o.geometry.args;const p=o.localToWorld(new THREE.Vector3());if(a[1]<=.012&&o.material.color.hex===0xffffff||o.material.color.hex===0xf2f4f6){if(p.x>8&&p.x<14&&p.z>3&&p.z<18)console.log('whitebox',a.map(v=>+v.toFixed(2)),p.x.toFixed(2),p.y.toFixed(3),p.z.toFixed(2))}}});

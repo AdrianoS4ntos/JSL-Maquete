@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JSL — Modelo demonstrativo de integração entre setores</title>
 <style>
+/* ========== CSS A · ESTILOS — TEMA E LAYOUT DESKTOP ========== */
 :root{--bg1:#2a3a68;--bg2:#0d1530;--panel:#131a33f4;--text:#eef1f8;--mut:#a9b3cc;--acc:#ff4b5c;--line:#2d3862;--chip:#1e2745;--btn:#d4121f;--bar:#0f1629ee;box-sizing:border-box}
 html,body{height:100%}html{background:var(--bg2)}
 body{margin:0;display:flex;flex-direction:column;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg2)}
@@ -31,7 +32,7 @@ aside ul{margin:0;padding-left:18px}aside li{margin:2px 0}
 .pbar{display:flex;gap:4px;margin:8px 0}.seg{flex:1;height:6px;border-radius:3px;background:var(--line)}.seg.on{background:var(--acc)}
 .nav{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;background:var(--chip);border:1px solid var(--acc);color:var(--acc)}
-.rb{display:flex;align-items:center;gap:8px;font-size:12px;margin:3px 0}.rb span{width:60px}.rb i{height:8px;border-radius:4px}
+/* painel final: índices reais de reciclagem */
 .ri{margin:7px 0;font-size:12px}.ri .rh{display:flex;justify-content:space-between;gap:8px}.ri .rh b{font-weight:600}.ri .rh em{font-style:normal;font-weight:700;white-space:nowrap}.ri .rt{height:8px;border-radius:4px;background:var(--line);margin:3px 0 2px;overflow:hidden}.ri .rt i{display:block;height:100%;border-radius:4px}.ri small{display:block;font-size:11px;color:var(--mut);line-height:1.35}.rsrc{margin-top:6px;font-size:10.5px}
 .note,.legal{font-size:11.5px;color:var(--mut)}.ok{margin:6px 0;color:var(--acc)}
 .legal{margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
@@ -53,6 +54,7 @@ aside ul{margin:0;padding-left:18px}aside li{margin:2px 0}
 body.presenting .tip,body.running .tip{display:none}
 details{margin-top:10px;font-size:13px}summary{cursor:pointer;color:var(--mut)}
 .cats{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0}.cats i{font-style:normal;font-size:11px;padding:2px 7px;border-radius:9px;color:#fff;border:1px solid #ffffff55}
+/* ========== CSS B · LAYOUT RESPONSIVO — CELULAR E TABLET ========== */
 @media (max-width:760px){html,body{height:auto!important;min-height:100vh}main{flex:none;flex-direction:column}.stage{flex:none}.view{flex:none;height:62vh;min-height:320px}aside{width:auto;max-height:none;border-left:0;border-top:1px solid var(--line)}
 .tile{padding:3px 7px;gap:5px}.tile svg{width:15px;height:15px}.tile b{font-size:15px}.tile.tx b{font-size:11.5px}.tile span{font-size:8.5px}.pres .pd{font-size:12.5px}.pres{bottom:6px;padding:8px 10px}.pres button{padding:5px 8px;font-size:11.5px}
 body.narrating .view{min-height:0;height:max(220px,min(62vh,calc(100vh - var(--hdr,0px))));height:max(220px,min(62svh,calc(100svh - var(--hdr,0px))))}}
@@ -71,7 +73,7 @@ body.narrating .hnar{display:block}
 .hnar .ns{display:block;margin-top:3px;padding-left:7px;border-left:2px solid var(--acc);color:var(--mut)}.hnar .ns b{color:var(--text)}
 body.narrating .pres .pt,body.narrating .pres .pd,body.narrating .pres .pbar{display:none}}
 @media (orientation:landscape) and (max-height:500px) and (pointer:coarse){.hnar .nd{max-height:17vh;max-height:17svh}}
-/* ===== celular: elementos criados por JS somente quando uma das media queries abaixo casa (no desktop não existem) ===== */
+/* celular: elementos criados por JS somente quando uma das media queries abaixo casa (no desktop não existem) */
 .mtg,.mpl,.mdr,.msum{display:none}
 /* celular em paisagem: duas colunas (maquete ~58% | fluxo ~42%); indicadores + controles numa gaveta no canto do canvas */
 @media (orientation:landscape) and (max-height:560px){
@@ -118,7 +120,7 @@ body.mdr-on .mdr{display:flex}
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ===== DADOS (edite aqui os textos) ===== */
+/* ========== JS 1. CONFIGURAÇÃO & DADOS (textos editáveis e dados reais) ========== */
 const SECT={
 dir:{n:'Diretoria / Investidores',obj:'Conduzir a gestão estratégica: avaliar oportunidades, decidir sobre projetos e acompanhar resultados.',
 f:['Avaliação de oportunidades','Tomada de decisões estratégicas','Aprovação de projetos','Análise de investimentos','Acompanhamento de resultados'],
@@ -158,13 +160,17 @@ const STEPS=[
 {t:'ETAPA 5 — JSL ODS',d:'As informações retornam ao JSL ODS, que acompanha os resultados, organiza indicadores ambientais e prepara relatórios para o município. Diretoria e Administrativo também recebem os resultados.',s:['ods','dir','adm'],e:['log-ods','ods-dir','ods-adm']}];
 const INTEG=[['JSL ODS ↔ Diretoria','o ODS apresenta a proposta; a Diretoria decide e acompanha resultados.'],['Diretoria ↔ Administrativo','a decisão aprovada vira contratos, orçamento e recursos.'],['Administrativo ↔ Logística','o Administrativo organiza recursos e suporte à operação.'],['Logística → JSL ODS','a operação gera os volumes e a destinação que o ODS acompanha.'],['JSL ODS → Administrativo','solicitação de apoio administrativo e retorno de informações.']];
 const LEGAL='Este modelo é uma demonstração conceitual desenvolvida para fins acadêmicos. O JSL ODS é uma proposta acadêmica, não uma divisão oficial confirmada da JSL. Setores, fluxos, indicadores e exemplos são ilustrativos; 4 caminhões de coleta, 2 utilitários e até 6.000 t/ano são estimativas do projeto, não dados oficiais. O supermercado, os resíduos e os personagens são ilustrativos.';
-const MATN=['Papel','Plástico','Metal','Vidro','Papelão'],HT=[.55,.85,.4,.65,.95];
+/* alturas relativas (0–1) das barras animadas do painel 3D do JSL ODS (ilustrativas) */
+const ODS_BAR_H=[.55,.85,.4,.65,.95];
+/* índices reais de reciclagem/destinação no Brasil (painel final): [nome, % da barra, rótulo, detalhe e fonte, cor] */
+const RECICLAGEM_BR=[['Papel e Papelão',66.9,'66,9%','91,4% no papelão ondulado (IBÁ)',0x2b82e6],['Plásticos',25.6,'25,6%','reciclagem mecânica pós-consumo (PICPlast / Abiplast)',0xf27d16],['Metais / Alumínio',100,'100%','latas de alumínio (Recicla Latas) · aço: 47,1% (Abeaço)',0xf5c418],['Vidro',25.8,'25,8%','reciclado no país (Abividro)',0x2eb866],['Orgânicos',11.7,'11,7%','aproveitado em compostagem e biogás, de 45,3% do RSU gerado (ABREMA 2025)',0x8a6440],['Óleo Usado',5,'&lt; 5%','coletado no óleo de cozinha; 1 L contamina 25 mil L de água (Sabesp) · OLUC: meta de 30% em 2026 via rerrefino (ANP / CONAMA 362)',0x9a7b2f],['Inflamáveis e Perigosos (Classe I)',100,'100%','rastreado via MTR/CDF, com destinação em coprocessamento / incineração controlada (IBAMA / SINIR / CONAMA 499)',0xd9433a]];
 /* Paleta de design do projeto (referência de design, NÃO códigos oficiais da JSL): cinza #858B91, grafite #555D65, grafite escuro #292F36, vermelho #E51D2A, verde #3C9859, azul #3976A8, amarelo #F2C230. */
 /* Cores. Referência consultada (site de terceiros brandpalettes.com, NÃO o manual oficial da JSL): vermelho #F71B2C, cinza #7C7A7A, branco. Os demais tons (pisos dos setores, grafite, verde) são escolha visual. Ajuste aqui. */
 const K={red:0xe6192e,white:0xffffff,off:0xd5d9df,gl:0xb8c0ca,gm:0x78808a,gd:0x464e58,green:0x22a855,blue:0x2574c4,gk:0x20252c,glass:0x7cc4f0,skin:0xf2c6a0,yel:0xffc400,mat:[0x2b82e6,0xf27d16,0xf5c418,0x2eb866,0xb8844c]};
 /* Rota do caminhão [x,z,pausa,id]: A/B = coleta, T = triagem, D = destinação */
 const ROUTE=[[9.3,3.6],[9.3,2.6,1.2,'A'],[9.3,-.2,1.2,'B'],[9.3,-1.2],[10.3,-2.4],[11.3,-2.4,2.2,'T'],[13.9,-2.4],[14.6,-1.6],[14.6,2.6,1.2,'D']];
 
+/* ========== JS 2. RENDERIZADOR, CENA, LUZES E HELPERS ========== */
 const $=s=>document.querySelector(s),view=$('#view'),cv=$('#cv'),panel=$('#panel'),clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 let renderer;
 try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});}catch(e){view.insertAdjacentHTML('beforeend','<div class="err">Não foi possível iniciar o 3D (WebGL indisponível).</div>');}
@@ -175,7 +181,7 @@ scene.add(new THREE.HemisphereLight(0xf0f5ff,0x3a404a,.38));
 const sun=new THREE.DirectionalLight(0xfff0dc,.85);sun.position.set(17,14,9);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
 Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30});sun.target.position.set(9,0,2.5);scene.add(sun,sun.target);sun.shadow.radius=2;sun.shadow.bias=-.0006;sun.shadow.normalBias=.04;const fill=new THREE.DirectionalLight(0xcfe0ff,.16);fill.position.set(-9,8,-6);scene.add(fill);
 
-/* ===== helpers (y = base do objeto) ===== */
+/* --- helpers de geometria (y = base do objeto) --- */
 const MC={},mt=c=>MC[c]||(MC[c]=new THREE.MeshStandardMaterial({color:c,roughness:.62,flatShading:true}));
 function add(p,geo,c,x,y,z,o){const t=o&&o.op!=null,m=new THREE.Mesh(geo,t?new THREE.MeshStandardMaterial({color:c,roughness:.5,transparent:true,opacity:o.op}):mt(c));m.position.set(x,y,z);m.castShadow=!t;m.receiveShadow=true;p.add(m);return m}
 const bx=(p,w,h,d,c,x=0,y=0,z=0,o)=>add(p,new THREE.BoxGeometry(w,h,d),c,x,y+h/2,z,o);
@@ -187,17 +193,18 @@ function label(t,w,bg){const c=document.createElement('canvas');c.width=800;c.he
 g.fillStyle='#fff';g.font='700 44px "Segoe UI",system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(t,400,68,740);
 const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:true,depthWrite:false,transparent:true}));s.scale.set(w,w*.1625,1);s.renderOrder=5;s.userData.w=w;return s}
 
-/* ===== plataforma e edifício (mesma maquete do protótipo; cores adaptadas à JSL) ===== */
+/* ========== JS 3. CENA 3D & PRÉDIOS DOS SETORES ========== */
+/* --- plataforma (cores adaptadas à JSL) --- */
 const CONCRETE=0xa8adb3,GRASS=0x3d9946,WC=CONCRETE,G=.1,F=.24;
 bx(scene,36,.7,36,0x2f3237,9,-.7,2.5);bx(scene,35.6,.1,35.6,CONCRETE,9,0,2.5);
 bx(scene,36.02,.12,.12,K.red,9,-.06,20.5);bx(scene,.12,.12,36.02,K.red,27,-.06,2.5);
-/* ===== quatro prédios independentes (fachada, janelas amplas, porta, placa) ===== */
+/* --- quatro prédios independentes (fachada, janelas amplas, porta, placa) --- */
 const GK=K.gk,BG={};
 const BCFG={dir:{x:-4.6,z:-4.6,wall:K.gd,band:K.red,dx:2,fl:0x58626e},adm:{x:3.8,z:-4.6,wall:K.blue,band:K.gm,dx:-2.1,fl:0x5d82a8},ods:{x:-4.6,z:1.6,wall:K.green,band:K.gm,dx:0,fl:0x4da36d},log:{x:3.8,z:1.6,wall:K.gm,band:K.yel,dx:1.85,fl:0x828b96}};
 /* janela: montantes de altura total nas laterais, travessas e vidro ENTRE os montantes (sem faces coplanares nas quinas do caixilho) */
 function win(p,w,h,x,y,z,ax){const t=.06,i=w-t;bx(p,ax?i:.03,h-2*t,ax?.03:i,K.glass,x,y+t,z,{op:.6});
  [y,y+h-t].forEach(yy=>bx(p,ax?i:.05,t,ax?.05:i,GK,x,yy,z));[-1,1].forEach(s=>bx(p,ax?t:.05,h,ax?.05:t,GK,x+(ax?s*w/2:0),y,z+(ax?0:s*w/2)))}
-/* v19: peças de canto sem sobreposição. Cada quina tem um único dono (parede do fundo no canto fundo-esquerdo; pilar nos outros três);
+/* peças de canto sem sobreposição. Cada quina tem um único dono (parede do fundo no canto fundo-esquerdo; pilar nos outros três);
    paredes, peitoris e vigas terminam na face do pilar; rodapés/faixas (revestimento, 2 cm maiores) não se cruzam entre si e
    ficam 2 cm acima/fora das faces das paredes, nunca no mesmo plano. Auditoria: tests/walls.js */
 function building(id){const c=BCFG[id],x=c.x,z=c.z,W=6.1,D=4.2,H=1.9,y=.2,T=.2,dx=c.dx,bg=new THREE.Group();scene.add(bg);BG[id]=bg;
@@ -228,7 +235,7 @@ Object.values(BCFG).forEach(c=>bx(scene,1.1,.02,1.6,SW,c.x+c.dx,G,c.z+2.1+.8));
 /* áreas verdes (grama) sob as árvores; o restante do chão é cinza concreto */
 [[.7,-11.2,19,7.2],[-.9,15.45,16.2,10.1],[23.2,1.1,7.6,11.4]].forEach(([x,z,w,d])=>bx(scene,w,.03,d,GRASS,x,.1,z));
 
-/* ===== os 4 ambientes (um por prédio): Diretoria, Administrativo, JSL ODS, Logística ===== */
+/* --- os 4 ambientes internos: Diretoria, Administrativo, JSL ODS, Logística --- */
 const S={},clickable=[],R={};
 function mkLabel(t,w,x,y,z,p,bg){const l=label(t,w,bg);l.position.set(x,y,z);(p||scene).add(l);return l}
 const CF={dir:{x:BCFG.dir.x,z:BCFG.dir.z,c:BCFG.dir.fl,n:'Diretoria'},adm:{x:BCFG.adm.x,z:BCFG.adm.z,c:BCFG.adm.fl,n:'Administrativo'},ods:{x:BCFG.ods.x,z:BCFG.ods.z,c:BCFG.ods.fl,n:'JSL ODS'},log:{x:BCFG.log.x,z:BCFG.log.z,c:BCFG.log.fl,n:'Logística'}};
@@ -236,7 +243,7 @@ for(const id in CF){const k=CF[id],g=new THREE.Group();g.position.set(k.x,0,k.z)
  const pm=new THREE.MeshStandardMaterial({color:k.c,roughness:.8,flatShading:true,emissive:K.red,emissiveIntensity:0}),tile=new THREE.Mesh(new THREE.BoxGeometry(5.7,.04,3.8),pm);tile.position.y=.22;tile.receiveShadow=true;g.add(tile);
  const edge=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(5.7,.1,3.8)),new THREE.LineBasicMaterial({color:0xffffff}));edge.position.y=.27;edge.visible=false;g.add(edge);
  S[id]={x:k.x,z:k.z,g,pm,edge,sp:mkLabel(k.n,3.2,k.x+BCFG[id].dx,(id==='dir'||id==='adm')?2.95:2.55,k.z+2.55,undefined,id==='ods'?'#2f8f46':'#d4121f'),w:3.2};R[id]=g}
-/* mobiliário (modelos do protótipo) */
+/* mobiliário */
 const ch0=0x25282c;
 function desk(g,x,z){bx(g,1.3,.07,.65,0xb4bac2,x,F+.585,z);[-.6,.6].forEach(d=>bx(g,.07,.62,.6,0x8e939b,x+d,F,z));bx(g,.1,.12,.08,0x33363b,x,F+.65,z-.12);bx(g,.5,.32,.04,0x1d1f23,x,F+.77,z-.12);bx(g,.44,.26,.01,K.glass,x,F+.8,z-.09);bx(g,.4,.02,.14,0xb3b7be,x,F+.66,z+.15)}
 function chair(g,x,z){bx(g,.42,.07,.52,ch0,x,F+.385,z+.04);bx(g,.42,.4,.06,ch0,x,F+.47,z+.31);bx(g,.06,.4,.06,0x33363b,x,F,z)}
@@ -253,7 +260,7 @@ chair(R.dir,-.6,1.3);chair(R.dir,.6,1.3);chair(R.dir,-.6,-.5);chair(R.dir,.6,-.5
 [-.95,.95].forEach(x=>bx(R.adm,.06,.6,1.3,CONCRETE,x,F,-.85));bx(R.adm,.06,.6,1.2,CONCRETE,0,F,.75);cab(R.adm,-2.5,-1.5,.5);cab(R.adm,2.5,.8,.5);
 /* JSL ODS (proposta acadêmica): atendimento, plantas e painel de resultados com barras animadas */
 board(R.ods,0,-1.8);
-const bars=HT.map((h,i)=>{const b=new THREE.Group();b.position.set(-1+i*.5,F+.72,-1.74);bx(b,.3,.9,.03,K.mat[i]);b.scale.y=.03;R.ods.add(b);return b});
+const bars=ODS_BAR_H.map((h,i)=>{const b=new THREE.Group();b.position.set(-1+i*.5,F+.72,-1.74);bx(b,.3,.9,.03,K.mat[i]);b.scale.y=.03;R.ods.add(b);return b});
 desk(R.ods,-1.2,0);chair(R.ods,-1.2,.75);desk(R.ods,1.2,0);chair(R.ods,1.2,.75);bx(R.ods,.3,.04,.22,K.red,-.75,F+.655,.12);bx(R.ods,.3,.04,.22,K.white,1.65,F+.655,.12);tree(R.ods,-2.4,1.4,F);tree(R.ods,2.4,1.4,F);
 /* LOGÍSTICA (sala de planejamento de rotas; o pátio fica no lado direito) */
 board(R.log,0,-1.8,true);desk(R.log,-1.2,-.1);chair(R.log,-1.2,.65);desk(R.log,1.2,-.1);chair(R.log,1.2,.65);
@@ -261,7 +268,8 @@ bx(R.log,1.3,.07,.8,0xb4bac2,0,F+.585,1.35);[-.58,.58].forEach(d=>bx(R.log,.07,.
 /* município (origem da solicitação) */
 const mg=new THREE.Group();mg.position.set(-7.2,G,5.6);scene.add(mg);bx(mg,.9,.7,.8,CONCRETE,0,0,0);cn(mg,.75,.5,K.red,0,.7,0,4).rotation.y=Math.PI/4;mkLabel('MUNICÍPIO',1.8,-7.2,1.7,5.6);
 
-/* ===== área externa (lado direito): pátio, armazenamento, triagem, carga e descarga ===== */
+/* ========== JS 4. FROTA, ROTAS & PÁTIO OPERACIONAL ========== */
+/* --- área externa (lado direito): pátio, armazenamento, triagem, carga e descarga --- */
 const lw=new THREE.Group();lw.position.x=2.2;scene.add(lw);
 bx(lw,1.5,.02,7.8,0x2b3038,9.3,G,.6);bx(lw,6.9,.02,1.5,0x2b3038,12,G,-2.4);bx(lw,1.5,.02,7.6,0x2b3038,14.6,G,.8);
 function zone(id,x,z,w,d,c,name,lw_,ly,lx,lz){const pm=new THREE.MeshStandardMaterial({color:c,roughness:.8,flatShading:true,emissive:K.red,emissiveIntensity:0}),tile=new THREE.Mesh(new THREE.BoxGeometry(w,.04,d),pm);tile.position.set(x,G+.02,z);tile.receiveShadow=true;lw.add(tile);
@@ -342,7 +350,7 @@ const LG={reset(){Object.assign(F8,{d:0,v:0,w:0,k:0,run:false,done:false});place
 LG.reset();
 let odsT=0;const ODSR=v=>odsT=v;
 
-/* ===== conexões entre setores (linhas + setas + pontos luminosos, como no protótipo) ===== */
+/* --- conexões entre setores (linhas, setas e pontos luminosos) --- */
 const PT={};for(const id in S)PT[id]=[S[id].x,S[id].z];PT.mun=[-7.2,5.6];PT.yard=[8.4,2.05];
 const flowG=new THREE.Group();scene.add(flowG);let packets=[],flowT=0;
 function clearFlow(){while(flowG.children.length)flowG.remove(flowG.children[0]);packets=[]}
@@ -365,7 +373,7 @@ for(const id in BG)BG[id].traverse(o=>{if(o.isMesh){o.userData.sector=id;clickab
 lw.traverse(o=>{if(o.isMesh&&!o.userData.sector){o.userData.sector='log';clickable.push(o)}});
 for(const id in S){S[id].sp.userData.sector=S[id].p||id;clickable.push(S[id].sp)}
 
-/* ===== rua de coleta + supermercado (mesma plataforma, lado direito) ===== */
+/* --- rua de coleta, circuito do supermercado e caminhão da coleta externa --- */
 /* circuito de sentido único contornando o supermercado (coordenadas locais do lw; mundo.x = local.x + 2.2):
    base → rua de ligação → avenida (leste) → lateral leste do supermercado (norte) → corredor do estacionamento (oeste)
    → rua de ligação (sul), parada junto às lixeiras da Área de Coleta → base */
@@ -403,7 +411,8 @@ CL.update=dt=>{if(CL.ph<0)return;if(CL.on)main.g.rotation.y+=fm(main.g.rotation.
   if(ph===5){got.add('A').add('B');triT=0;OP2.ext=null;OP2.vis=true;OP2.i=-1;nxt(OP2)}}
  if(CL.ph===3)OP2.ext={at:[8.4,12+clamp((CL.tS-2.6)/1.1,0,3)*.8],m:'bend',yaw:Q,prop:'box'};if(CL.ph===2&&OP2.ext)OP2.ext.at=[8.4,12]};
 
-/* ===== personagens (blocos geométricos, cabeça grande, luvas/botas escuras — padrão da imagem de referência) ===== */
+/* ========== JS 5. PERSONAGENS ========== */
+/* --- blocos geométricos, cabeça grande, luvas e botas escuras --- */
 const KC={vest:0xa8e63a,stripe:0xf4f7ec,helm:0xf5e51a,glove:0x1c1d20,boot:0x3a2f2a};
 function mkChar(role,o){const op=role==='op',g=new THREE.Group(),body=new THREE.Group();g.add(body);
  const skin=op?0xdcdfdf:0xe6c8a6,pants=op?0x384761:0x24272d,shirt=op?KC.vest:role==='dir'?0x1f2024:0xf2f4f6,hair=op?0x8a4a2a:0x1d1e22;
@@ -469,12 +478,12 @@ addChar(scene,'ods',{fem:1},[{a:'sit',at:L('ods',1.2,.75),yaw:PI,t:14,m:'sit_typ
 addChar(scene,'adm',{},[{a:'idle',at:L('log',.25,-1.1),yaw:PI,t:1e9,m:'check_auto',gv:'c'}]);
 addChar(scene,'adm',{fem:1},[{a:'sit',at:L('log',1.2,.65),yaw:PI,t:1e9,m:'sit_type',gx:'log',mx:'sit_talk'}]);
 /* operação de coleta (coordenadas locais do pátio) */
-const OP1=addChar(lw,'op',{fem:1},[{a:'idle',at:[10.9,6.7],yaw:PI,t:3.5,m:'check'},{a:'walk',p:[[11.9,6.7]]},{a:'idle',t:3.5,yaw:PI,m:'check'},{a:'walk',p:[[12.9,6.7]]},{a:'idle',t:3.5,yaw:PI,m:'check'},{a:'walk',p:[[10.9,6.7]]}]);
+addChar(lw,'op',{fem:1},[{a:'idle',at:[10.9,6.7],yaw:PI,t:3.5,m:'check'},{a:'walk',p:[[11.9,6.7]]},{a:'idle',t:3.5,yaw:PI,m:'check'},{a:'walk',p:[[12.9,6.7]]},{a:'idle',t:3.5,yaw:PI,m:'check'},{a:'walk',p:[[10.9,6.7]]}]);
 const OP2=addChar(lw,'op',{},[{a:'idle',at:[10.3,-1.35],yaw:0,t:3,m:'bend',prop:'box'},{a:'walk',p:[[11.3,-1.35]]},{a:'idle',t:3,yaw:0,m:'bend',prop:'box'},{a:'walk',p:[[12.3,-1.35]]},{a:'idle',t:3,yaw:0,m:'bend',prop:'box'},{a:'walk',p:[[10.3,-1.35]]}]);
 addChar(lw,'op',{fem:1},[{a:'idle',at:[8.6,1.45],yaw:0,t:2,m:'watch'},{a:'walk',p:[[10.8,1.45]]},{a:'idle',t:4,yaw:PI,m:'check'},{a:'walk',p:[[12.7,1.45]]},{a:'idle',t:4,yaw:PI,m:'check'},{a:'walk',p:[[8.6,1.45]]}]);
 CL.reset();
 
-/* ===== cenário ampliado: avenida, galpão JSL, estacionamento, mobiliário urbano ===== */
+/* ========== JS 6. CENÁRIO URBANO: AVENIDA, GALPÃO, SUPERMERCADO E SINALIZAÇÃO ========== */
 const ASF=0x2b3038;
 function plane(txt,w,h,x,y,z,bg,fg,fs){const c=document.createElement('canvas');c.width=1024;c.height=Math.round(1024*h/w);const g=c.getContext('2d');g.fillStyle=bg;g.beginPath();if(g.roundRect)g.roundRect(8,8,1008,c.height-16,40);else g.rect(8,8,1008,c.height-16);g.fill();g.lineWidth=10;g.strokeStyle='#ffffff';g.stroke();g.fillStyle=fg;g.font=fs;g.textAlign='center';g.textBaseline='middle';g.fillText(txt,512,c.height/2+4,940);
  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)}));m.position.set(x,y,z);scene.add(m);return m}
@@ -534,7 +543,7 @@ bench(-2,6.3);bench(2.6,6.3);bench(-4,12);bench(1,17);bin(-1.2,6.2,K.green);bin(
 bx(scene,35.4,.4,.5,0x228b3b,9,G,20.25);bx(scene,35.4,.4,.5,0x228b3b,9,G,-15.25);bx(scene,.5,.4,35.4,0x228b3b,26.75,G,2.5);bx(scene,.5,.4,35.4,0x228b3b,-8.75,G,2.5);
 
 
-/* ===== vias, sinalização, cercas e vagas ===== */
+/* --- vias, sinalização, cercas e vagas --- */
 const arrGeo=(()=>{const sh=new THREE.Shape();sh.moveTo(0,.45);sh.lineTo(.3,.05);sh.lineTo(.11,.05);sh.lineTo(.11,-.45);sh.lineTo(-.11,-.45);sh.lineTo(-.11,.05);sh.lineTo(-.3,.05);sh.closePath();return new THREE.ShapeGeometry(sh)})();
 function arrow(x,z,rot,c,sc){const m=new THREE.Mesh(arrGeo,new THREE.MeshBasicMaterial({color:c||0xffffff,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}));m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(x,G+.05,z);m.scale.setScalar(sc||.8);scene.add(m)}
 function gtxt(txt,w,d,x,z,bg,fg){const c=document.createElement('canvas');c.width=512;c.height=Math.round(512*d/w);const g=c.getContext('2d');g.fillStyle=bg;g.fillRect(0,0,512,c.height);g.fillStyle=fg;g.font='bold '+Math.round(c.height*.62)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,256,c.height/2+2,480);const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4}));m.rotation.x=-Math.PI/2;m.position.set(x,G+.045,z);scene.add(m)}
@@ -563,13 +572,13 @@ bx(scene,13.6,.01,.1,K.yel,17.6,G+.02,-5.5);
 [[-5.8,-1.4,-Math.PI/2],[5.6,-1.4,-Math.PI/2],[-.4,-6,PI],[-.4,5.8,PI],[-6.4,5,-Math.PI/2],[2.2,5,-Math.PI/2]].forEach(([x,z,r])=>arrow(x,z,r,K.yel,.5));
 /* cercas metálicas: pátio operacional, frente e borda da área de prédios */
 fence(7.45,-7.2,7.45,-1.3);fence(7.45,-.3,7.45,3.4);fence(-8.4,6.7,-6.1,6.7);fence(-3,6.7,4.8,6.7);fence(10.6,-14.8,10.6,-5.6);fence(-8.4,-7,7.2,-7);
-/* ===== câmera (mesma lógica do protótipo) ===== */
+/* ========== JS 7. CÂMERA ORBITAL ========== */
 const C0={th:.6,ph:.98,r:46,t:new THREE.Vector3(9,.4,2.5)};
 const goal={th:C0.th,ph:C0.ph,r:C0.r,t:C0.t.clone()},cur={th:C0.th,ph:C0.ph,r:C0.r*1.3,t:C0.t.clone()};
 function resize(){const w=view.clientWidth,h=view.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 new ResizeObserver(resize).observe(view);resize();
 
-/* ===== estado e interface ===== */
+/* ========== JS 8. SIMULAÇÃO, ESTADO & PAINEL LATERAL (inclui o painel final) ========== */
 let mode='ov',sel=null,active=new Set();const FS={i:-1,auto:false,t:0,done:false,hold:0,k:''},SIM={paused:false},PR={on:false,i:-1,paused:false,t:0,t2:0,sub:0,cap:''};
 const nm=id=>SECT[id].n.split(' — ')[0];
 function setBtns(){const run=FS.auto&&!SIM.paused;document.body.classList.toggle('running',FS.auto);document.querySelectorAll('[data-v]').forEach(b=>{const v=b.dataset.v;b.classList.toggle('on',(v==='ov'&&mode==='ov')||(v===sel&&mode==='sec')||(v==='flow'&&mode==='flow'&&!FS.auto&&FS.i>=0)||(v==='start'&&run)||(v==='int'&&mode==='int')||(v==='auto'&&CAM.auto)||(v==='follow'&&CAM.follow)||(v==='pres'&&PR.on));if(v==='pause')b.disabled=!run;if(v==='resume')b.disabled=!SIM.paused})}
@@ -611,13 +620,11 @@ function secHtml(id,pres){const d=SECT[id];
  +`<details><summary>Funções detalhadas e exemplos</summary>${li(d.f)}${li(d.ex)}</details>`}
 function presPanel(){const s=PRS[PR.i]||PRS[0];return `<p class="note" style="margin:0"><b>MODO APRESENTAÇÃO</b> · etapa ${PR.i+1} de ${PRS.length}. A câmera é conduzida automaticamente; use os botões sobre a maquete.</p>`+(s.sec?secHtml(s.sec,true):`<h2>${s.t}</h2><p>${s.d}</p>`)}
 
-// Índices reais de reciclagem/destinação no Brasil (painel final da simulação)
-const RCB=[['Papel e Papelão',66.9,'66,9%','91,4% no papelão ondulado (IBÁ)',0x2b82e6],['Plásticos',25.6,'25,6%','reciclagem mecânica pós-consumo (PICPlast / Abiplast)',0xf27d16],['Metais / Alumínio',100,'100%','latas de alumínio (Recicla Latas) · aço: 47,1% (Abeaço)',0xf5c418],['Vidro',25.8,'25,8%','reciclado no país (Abividro)',0x2eb866],['Orgânicos',11.7,'11,7%','aproveitado em compostagem e biogás, de 45,3% do RSU gerado (ABREMA 2025)',0x8a6440],['Óleo Usado',5,'&lt; 5%','coletado no óleo de cozinha; 1 L contamina 25 mil L de água (Sabesp) · OLUC: meta de 30% em 2026 via rerrefino (ANP / CONAMA 362)',0x9a7b2f],['Inflamáveis e Perigosos (Classe I)',100,'100%','rastreado via MTR/CDF, com destinação em coprocessamento / incineração controlada (IBAMA / SINIR / CONAMA 499)',0xd9433a]];
 function ui(){setBtns();let h='';
 if(mode==='ov')h=`<h2>Integração entre setores</h2><p>Selecione um setor da maquete para conhecer suas funções e visualizar sua participação nos processos.</p><p class="note">Use “Iniciar” para a simulação completa (solicitação municipal → Diretoria → Administrativo → Logística e Operações, com a coleta externa → JSL ODS), “Fluxo passo a passo” para avançar manualmente e “Ver integração dos setores” para ver como as áreas se relacionam.</p>`;
 else if(mode==='sec')h=secHtml(sel,false);else if(mode==='pres')h=presPanel();
 else if(mode==='int')h=`<div class="row"><h2>Integração dos setores</h2><button data-act="close">✕ Fechar</button></div><p style="margin:0">Relação conceitual entre as áreas; nem todos os setores participam de todas as etapas.</p><h3>Como se relacionam</h3>${li(INTEG.map(x=>`<b>${x[0]}:</b> ${x[1]}`))}<p class="note">As linhas vermelhas animadas na maquete representam a circulação de informações. Não é um procedimento oficial da JSL.</p>`;
-else if(mode==='tru')h=truPanel();else{const dn=FS.done;h=`<h2>Fluxo do processo</h2><p class="note" style="margin:0">Exemplo: solicitação de um município para coleta e gerenciamento de resíduos. ${SIM.paused?'<b>⏸ Simulação pausada.</b> Use “Continuar”.':FS.auto?'<b>Simulação em andamento.</b>':FS.i<0?'Pressione <b>Iniciar</b> para executar a simulação completa.':'Modo manual.'}</p><div class="pbar">${STEPS.map((s,i)=>`<i class="seg ${dn||i<=FS.i?'on':''}"></i>`).join('')}</div><ol class="steps">${STEPS.map((s,i)=>`<li data-act="step:${i}" class="${i===FS.i?'cur':''}"><b>${s.t}</b><span>${s.d}</span></li>`).join('')}</ol>${FS.i===3?`<h3>Coleta externa (etapa 4)</h3><ol class="steps">${CLS.map((c,j)=>`<li class="${j===CL.ph?'cur':''}"><b>${j+1}. ${c[0]}</b><span>${c[1]}</span></li>`).join('')}</ol>`:''}${FS.i===4||dn?`<h3>Reciclagem e destinação no Brasil</h3>${RCB.map(([n,v,t,d,c])=>`<div class="ri"><div class="rh"><b>${n}</b><em>${t}</em></div><div class="rt"><i style="width:${v}%;background:#${c.toString(16).padStart(6,'0')}"></i></div><small>${d}</small></div>`).join('')}<p class="note rsrc">Dados reais: ABREMA (2025), IBÁ, Recicla Latas, PICPlast, Abividro, ANP, Sabesp e IBAMA/SINIR.</p>`:''}${dn?'<p class="ok"><b>Processo concluído</b> (simulação acadêmica): a solicitação percorreu os quatro setores, da proposta ao acompanhamento dos resultados.</p>':''}<div class="nav"><button data-act="prev" ${FS.i<1?'disabled':''}>← Etapa anterior</button><button data-act="next" ${FS.i>=4?'disabled':''}>Próxima etapa →</button><button data-act="restart">Reiniciar</button></div><button data-act="close">Voltar à visão geral</button>`}
+else if(mode==='tru')h=truPanel();else{const dn=FS.done;h=`<h2>Fluxo do processo</h2><p class="note" style="margin:0">Exemplo: solicitação de um município para coleta e gerenciamento de resíduos. ${SIM.paused?'<b>⏸ Simulação pausada.</b> Use “Continuar”.':FS.auto?'<b>Simulação em andamento.</b>':FS.i<0?'Pressione <b>Iniciar</b> para executar a simulação completa.':'Modo manual.'}</p><div class="pbar">${STEPS.map((s,i)=>`<i class="seg ${dn||i<=FS.i?'on':''}"></i>`).join('')}</div><ol class="steps">${STEPS.map((s,i)=>`<li data-act="step:${i}" class="${i===FS.i?'cur':''}"><b>${s.t}</b><span>${s.d}</span></li>`).join('')}</ol>${FS.i===3?`<h3>Coleta externa (etapa 4)</h3><ol class="steps">${CLS.map((c,j)=>`<li class="${j===CL.ph?'cur':''}"><b>${j+1}. ${c[0]}</b><span>${c[1]}</span></li>`).join('')}</ol>`:''}${FS.i===4||dn?`<h3>Reciclagem e destinação no Brasil</h3>${RECICLAGEM_BR.map(([n,v,t,d,c])=>`<div class="ri"><div class="rh"><b>${n}</b><em>${t}</em></div><div class="rt"><i style="width:${v}%;background:#${c.toString(16).padStart(6,'0')}"></i></div><small>${d}</small></div>`).join('')}<p class="note rsrc">Dados reais: ABREMA (2025), IBÁ, Recicla Latas, PICPlast, Abividro, ANP, Sabesp e IBAMA/SINIR.</p>`:''}${dn?'<p class="ok"><b>Processo concluído</b> (simulação acadêmica): a solicitação percorreu os quatro setores, da proposta ao acompanhamento dos resultados.</p>':''}<div class="nav"><button data-act="prev" ${FS.i<1?'disabled':''}>← Etapa anterior</button><button data-act="next" ${FS.i>=4?'disabled':''}>Próxima etapa →</button><button data-act="restart">Reiniciar</button></div><button data-act="close">Voltar à visão geral</button>`}
 panel.innerHTML=h+`<p class="legal">${LEGAL}</p>`}
 panel.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const[a,v]=el.dataset.act.split(':');
 if(a==='close')home(false);else if(a==='sec')selSector(v);else if(a==='step')goStep(+v,false);
@@ -626,7 +633,8 @@ document.querySelector('.ctrl').addEventListener('click',e=>{const b=e.target.cl
 if(v==='ov')home(false);else if(v==='reset')home(true);else if(v==='flow')goStep(0,false);else if(v==='start')simStart();else if(v==='pause')simPause();else if(v==='resume')simResume();else if(v==='restart')simRestart();else if(v==='int')showInt();else if(v==='top')camTop();else if(v==='follow'){CAM.follow=!CAM.follow;if(CAM.follow)CAM.auto=false;setBtns()}else if(v==='auto'){CAM.auto=!CAM.auto;if(CAM.auto)CAM.follow=false;setBtns()}else selSector(v)});
 
 
-/* ===== indicadores da operação (faixa compacta sobre a maquete) ===== */
+/* ========== JS 9. HUD, LAYOUT MOBILE, APRESENTAÇÃO & NARRADOR ========== */
+/* --- indicadores da operação (faixa compacta sobre a maquete) --- */
 const hud=$('#hud'),pres=$('#pres');
 const IC={truck:'<svg viewBox="0 0 24 24"><rect x="1" y="6" width="13" height="9" rx="1"/><path d="M15 9h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="2"/><circle cx="18" cy="17.5" r="2"/></svg>',van:'<svg viewBox="0 0 24 24"><path d="M2 8h11l4 4h5v4H2z"/><circle cx="7" cy="17.5" r="2"/><circle cx="17" cy="17.5" r="2"/></svg>',box:'<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/></svg>',ok:'<svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>',dot:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg>',bld:'<svg viewBox="0 0 24 24"><path d="M4 21V5l8-3 8 3v16h-5v-5H9v5z"/></svg>',bin:'<svg viewBox="0 0 24 24"><path d="M4 4h16v4H4zM6 10h12v10H6z"/></svg>'};
 const TILES=[['truck','Caminhões de coleta'],['van','Veículos de apoio'],['box','Resíduos (ilustrativo)'],['ok','Etapas concluídas'],['dot','Situação',1],['bld','Setor responsável',1],['bin','Triagem',1]];
@@ -642,7 +650,7 @@ function hudVals(){let done=0,sit='Aguardando',resp='—';
  const w=CL.cl*.35,tr=triStage();
  return['4','2',w?w.toFixed(2).replace('.',',')+' t':'0 t',done+'/5',sit,resp,tr&&tr!=='Concluída'?tr:tr?'Concluída':'—']}
 function hudUpdate(){const v=hudVals();for(let i=0;i<v.length;i++)if(HC[i]!==v[i]){HC[i]=v[i];if(hv[i])hv[i].textContent=v[i]}}
-/* ===== layout de celular: só age quando uma das media queries casa; no desktop nada é criado nem movido ===== */
+/* --- layout de celular: só age quando uma das media queries casa; no desktop nada é criado nem movido --- */
 const MQ_L='(orientation: landscape) and (max-height: 560px)',MQ_P='(orientation: portrait) and (max-width: 768px)';
 const mq=q=>typeof matchMedia==='function'?matchMedia(q):null,MQL=mq(MQ_L),MQP=mq(MQ_P);
 const ctrlEl=document.querySelector('.ctrl'),stageEl=document.querySelector('.stage');let MB=null;
@@ -683,7 +691,7 @@ window.addEventListener('orientationchange',()=>{mobLayout();setTimeout(mobLayou
 mobLayout();
 
 
-/* ===== modo apresentação (câmera guiada pelos setores; separado da simulação) ===== */
+/* --- modo apresentação (câmera guiada pelos setores; separado da simulação) --- */
 const PRS=[
 {t:'Visão geral',cam:[9,.4,2.5,46,.6,.98],act:Object.keys(SECT),e:[],dur:12,d:'A maquete reúne quatro setores — Diretoria, Administrativo, Logística e Operações e JSL ODS — em prédios próprios, ao lado do galpão, do supermercado e da estrada de coleta. Todos funcionam de forma integrada.'},
 {t:'Diretoria',sec:'dir',cam:[-4.6,.6,-4.6,13,.6,.9],act:['dir'],e:['ods-dir'],dur:10,d:'A Diretoria analisa as solicitações recebidas, aprova e direciona as atividades e integra os demais setores.'},
@@ -716,7 +724,7 @@ function presUpdate(dt){if(!PR.on||PR.paused)return;PR.t+=dt;const i=PR.i;
  if(presCap()!==PR.cap)presRender()}
 pres.addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const a=b.dataset.p;if(a==='prev')presGo(PR.i-1);else if(a==='next')presGo(PR.i+1);else if(a==='pause')presPause();else if(a==='end')presEnd()});
 
-/* ===== narrador ao vivo no cabeçalho (visível apenas no celular via CSS; desktop inalterado) ===== */
+/* --- narrador ao vivo no cabeçalho (visível apenas no celular via CSS) --- */
 const hdr=$('header'),hnar=$('#hnar'),NMQ='(max-width:768px),(orientation:landscape) and (max-height:500px) and (pointer:coarse)';let NK='',NON=false;
 const narrMob=()=>{try{return matchMedia(NMQ).matches}catch(e){return false}};
 function hdrSize(){try{document.documentElement.style.setProperty('--hdr',hdr.offsetHeight+'px')}catch(e){}}
@@ -734,7 +742,8 @@ function narrUpdate(){const on=PR.on||(mode==='flow'&&FS.auto&&FS.i>=0);
  hnar.innerHTML=`<div class="pbar">${n.bar.map(o=>`<i class="seg ${o?'on':''}"></i>`).join('')}</div><div class="nh"><div class="nt">${n.t}${n.st?` <small>${n.st}</small>`:''}</div><button class="nb" data-n="steps" title="Ver a lista completa das etapas">Etapas ↓</button></div><p class="nd">${n.d}${n.sub?`<span class="ns">${n.sub}</span>`:''}</p>`}
 hnar.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('[data-n]')))return;const t=(!PR.on&&panel.querySelector('.steps'))||panel;try{t.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}});
 
-/* ===== interação com o mouse/toque ===== */
+/* ========== JS 10. INTERAÇÃO (MOUSE, TOQUE E TECLADO) & LOOP ========== */
+/* --- mouse e toque --- */
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
 function pick(e){const r=cv.getBoundingClientRect();ndc.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);ray.setFromCamera(ndc,cam);const h=ray.intersectObjects(clickable,false)[0];return h?h.object.userData.sector:null}
 const P=new Map();let moved=0,pd=0,pmx=0,pmy=0,dragBtn=0,panDrag=false;
@@ -766,7 +775,7 @@ function camKeys(dt){if(!KEYS.size)return;const h=k=>KEYS.has(k),sp=dt*goal.r*.9
  if(fx||fz){const sr=Math.sin(goal.th),cr=Math.cos(goal.th);goal.t.x=clamp(goal.t.x+(cr*fx-sr*fz)*sp,-12,30);goal.t.z=clamp(goal.t.z+(-sr*fx-cr*fz)*sp,-20,24)}
  if(rot)goal.th+=rot*dt*1.4;if(zm)goal.r=clamp(goal.r*(1+zm*dt*1.2),LIM.rMin,LIM.rMax);manual()}
 
-/* ===== loop ===== */
+/* --- loop de animação (único requestAnimationFrame) --- */
 const clock=new THREE.Clock();let lastT=0,ST=0;
 (function loop(){requestAnimationFrame(loop);const t=clock.getElapsedTime(),dt=Math.min(.1,t-lastT);lastT=t;
 const fit=Math.max(1,1.3/cam.aspect);
@@ -774,10 +783,11 @@ beaconUpdate();camKeys(dt);if(CAM.follow){const w=main.g.localToWorld(new THREE.
 cur.th+=(goal.th-cur.th)*.07;cur.ph+=(goal.ph-cur.ph)*.07;cur.r+=(goal.r*fit-cur.r)*.07;cur.t.lerp(goal.t,.07);
 cam.position.set(cur.t.x+cur.r*Math.sin(cur.ph)*Math.sin(cur.th),cur.t.y+cur.r*Math.cos(cur.ph),cur.t.z+cur.r*Math.sin(cur.ph)*Math.cos(cur.th));cam.lookAt(cur.t);
 presUpdate(dt);if(!CAM.auto)CAM.was=false;flowCamUpdate(dt);const sdt=(SIM.paused||PR.paused)?0:dt;ST+=sdt;stepUpdate(sdt);LG.update(sdt);CL.update(sdt);CHS.forEach(st=>updChar(st,sdt,ST));
-bars.forEach((b,i)=>b.scale.y+=(Math.max(.03,odsT*HT[i])-b.scale.y)*Math.min(1,sdt*3));
+bars.forEach((b,i)=>b.scale.y+=(Math.max(.03,odsT*ODS_BAR_H[i])-b.scale.y)*Math.min(1,sdt*3));
 for(const id in S){const s=S[id],on=active.has(s.p||id);s.e=(s.e||0)+((on?1:0)-(s.e||0))*Math.min(1,dt*4);s.pm.emissiveIntensity=s.e*(.35+.15*Math.sin(t*3));s.edge.visible=s.e>.08;const k=1+.12*s.e,w=s.w*k;s.sp.scale.x+=(w-s.sp.scale.x)*.15;s.sp.scale.y+=(w*.1625-s.sp.scale.y)*.15}
 packets.forEach(p=>p.m.position.x=(((ST*.3+p.o)%1)-.5)*p.L);flowT+=dt;{const fa=Math.min(1,flowT/.7);flowG.traverse(o=>{if(o.material)o.material.opacity=fa})}Object.keys(TK).forEach(id=>TK[id].hl.visible=(mode==='tru'&&sel===id)||(id==='tk1'&&(mode==='flow'&&FS.i===3||mode==='col')));
 hudUpdate();mobSum();narrUpdate();renderer.render(scene,cam)})();
+/* ========== JS 11. API DE TESTES (window.__jsl) — usada pela suíte em tests/; não renomear ========== */
 window.__jsl={camera:cam,setTri(v){triT=v;triApply()},PR,PRS,presStart,presEnd,presGo,presPause,hudVals,triApply,get triT(){return triT},CAT,goal,cur,CAM,KEYS,FS,SIM,CL,f2,main,CHS,GV,ARM,GX,scene,BG,get mode(){return mode},simStart,simPause,simResume,simRestart,goStep,inB,narrData,get narrOn(){return NON}};
 ui();
 }

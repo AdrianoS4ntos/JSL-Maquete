@@ -1,5 +1,6 @@
 // Auditoria dinâmica: personagens e caminhão x sólidos estáticos, durante TODA a simulação.
-const {load,THREE}=require('./mock.js');const h=load(process.argv[2]);const J=h.J,DT=1/15;
+// Uso: node tests/audit_dyn.js [index.html] [--strict]   (--strict: folga de personagens 0,02 em vez de 0,06)
+const {load,THREE}=require('./mock.js');const ARGS=process.argv.slice(2),h=load(ARGS.find(a=>!a.startsWith('--'))||require('path').join(__dirname,'..','index.html'));const J=h.J,DT=1/15;
 const chg=new Set(J.CHS.map(c=>c.c.g));
 const inGroup=(o,set)=>{let a=o;while(a){if(set.has(a))return true;a=a.parent}return false};
 const mainG=J.main.g;
@@ -17,7 +18,7 @@ function check(name,root,tol){root.traverse(o=>{if(!o.isMesh||!vis(o))return;con
  for(const s of S){if(s.top===root)continue;const dx=Math.min(b.x1,s.x1)-Math.max(b.x0,s.x0),dz=Math.min(b.z1,s.z1)-Math.max(b.z0,s.z0),dy=Math.min(b.y1,s.y1)-Math.max(b.y0,s.y0);
   if(dx>tol&&dz>tol&&dy>tol){const k=name+' × '+s.d;const e=hits.get(k)||{n:0,max:0};e.n++;e.max=Math.max(e.max,Math.min(dx,dz,dy));hits.set(k,e)}}})}
 h.click('start');let t=0,n=0;
-function sample(){J.CHS.forEach((c,i)=>check('char'+i+'('+(c.name||c.role||i)+')',c.c.g,.06));check('CAMINHAO',mainG,.05)}
+function sample(){J.CHS.forEach((c,i)=>check('char'+i+'('+(c.name||c.role||i)+')',c.c.g,ARGS.includes('--strict')?.02:.06));check('CAMINHAO',mainG,.05)}
 sample();while(t<140&&!J.FS.done){h.tick(DT);t+=DT;if(++n%2==0)sample()}
 const arr=[...hits.entries()].sort((a,b)=>b[1].max-a[1].max);
 console.log('sim t=',t.toFixed(1),'pares únicos',arr.length);arr.slice(0,60).forEach(([k,e])=>console.log(` pen=${e.max.toFixed(2)} amostras=${e.n}  ${k}`));

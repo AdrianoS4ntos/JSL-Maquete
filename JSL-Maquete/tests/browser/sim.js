@@ -1,11 +1,11 @@
-const {chromium}=require('playwright');const fs=require('fs');
-const file=process.argv[2],tag=process.argv[3];
-const THREE=fs.readFileSync('/home/claude/jsl/vendor/three.min.js','utf8');
-(async()=>{const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+// Uso: node tests/browser/sim.js [index.html] [prefixo] — roda a simulação completa e salva capturas por etapa/fase.
+const {chromium}=require('playwright');const {LAUNCH,fileUrl,routeThree}=require('./env.js');
+const file=process.argv[2],tag=process.argv[3]||'run';
+(async()=>{const b=await chromium.launch(LAUNCH);
 const p=await b.newPage({viewport:{width:1400,height:850}});
 const logs=[];p.on('console',m=>{if(m.type()=='error')logs.push(m.text())});p.on('pageerror',e=>logs.push('PAGEERROR '+e.message));
-await p.route('**/three*.js',r=>r.fulfill({contentType:'application/javascript',body:THREE}));
-await p.goto('file://'+file);await p.waitForTimeout(4000);
+await routeThree(p);
+await p.goto(fileUrl(file));await p.waitForTimeout(4000);
 const st=()=>p.evaluate(()=>{const J=window.__jsl;const w=J.main.g.getWorldPosition?J.main.g.getWorldPosition(new (J.main.g.position.constructor)()):null;return {i:J.FS.i,ph:J.CL.ph,paused:J.SIM.paused,x:w&&+w.x.toFixed(2),y:w&&+w.y.toFixed(3),z:w&&+w.z.toFixed(2)}});
 await p.getByRole('button',{name:'Iniciar',exact:true}).click();
 const seen={};const trail=[];let shot={};const t0=Date.now();let paused=false;

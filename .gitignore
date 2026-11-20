@@ -1,0 +1,30 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Temporários e logs
+_tmp/
+tmp/
+*.tmp
+*.bak
+*.orig
+*.log
+
+# Artefatos gerados pelos scripts de teste/auditoria
+JSL-Maquete/tests/**/*.png
+JSL-Maquete/tests/**/*.json
+JSL-Maquete/*.png
+layout.json
+test-results/
+playwright-report/

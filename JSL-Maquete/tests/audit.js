@@ -1,4 +1,5 @@
-const {load,THREE}=require('./mock.js');const h=load(process.argv[2]||'/home/claude/jsl/index.html');const J=h.J;
+// Auditoria geométrica básica da cena (caixas estáticas). Uso: node tests/audit.js [index.html]
+const {load,THREE}=require('./mock.js');const h=load(process.argv[2]||require('path').join(__dirname,'..','index.html'));const J=h.J;
 const chg=new Set(J.CHS.map(c=>c.c.g));
 const M=[];J.scene.traverse(o=>{if(!o.isMesh||!o.geometry)return;let a=o,skip=false;while(a){if(chg.has(a))skip=true;a=a.parent}if(skip)return;
  const g=o.geometry;let w,hh,d,k=g.kind;if(k==='box')[w,hh,d]=g.args;else if(k==='cyl'){w=d=Math.max(g.args[0],g.args[1])*2;hh=g.args[2]??g.args[1]}else if(k==='cone'){w=d=g.args[0]*2;hh=g.args[1]}else return;
