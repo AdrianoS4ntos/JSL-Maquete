@@ -15,13 +15,13 @@ ok(J.CHS.length===13,'13 personagens');
 // ---- simulação completa ----
 h.click('start');let t=0,tl=[],last=-9;const trk=[];let maxJump=0,prev=pos(),stopT=0,collected=0,minStopDur=0;
 const pathPts=[];
-while(t<140&&!(J.FS.done)){h.tick(DT);t+=DT;if(J.FS.i!==last){tl.push([+t.toFixed(1),J.FS.i]);last=J.FS.i}
+while(t<140&&!(J.FS.done)){h.tick(DT);t+=DT;if(J.FS.i!==last){tl.push([t,J.FS.i]);last=J.FS.i}
  const p=pos();const d=Math.hypot(p[0]-prev[0],p[1]-prev[1]);maxJump=Math.max(maxJump,d);prev=p;let wr=0,q=J.main.g;while(q){wr+=q.rotation.y;q=q.parent}pathPts.push([t,p[0],p[1],wr,J.FS.i,J.CL.ph]);}
-console.log('linha do tempo (t,etapa):',JSON.stringify(tl));
+console.log('linha do tempo (t,etapa):',JSON.stringify(tl.map(([a,b])=>[+a.toFixed(1),b])));const FP_EPS=1e-6;
 ok(J.FS.done,'simulação termina (t='+t.toFixed(1)+'s)');
 ok(tl.map(x=>x[1]).join()==='0,1,2,3,4','sequência 0..4: '+tl.map(x=>x[1]).join());
 const dur=i=>{const a=tl.findIndex(x=>x[1]===i);return (tl[a+1]?tl[a+1][0]:t)-tl[a][0]};
-[0,1,2].forEach(i=>ok(dur(i)>=8&&dur(i)<8.6,`etapa ${i+1} = 8 s (${dur(i).toFixed(1)} s)`));ok(dur(4)>=12&&dur(4)<12.6,`etapa 5 = 8 s no ODS + 4 s de visão geral (${dur(4).toFixed(1)} s)`);
+[0,1,2].forEach(i=>ok(dur(i)>=8-FP_EPS&&dur(i)<8.6,`etapa ${i+1} = 8 s (${dur(i).toFixed(1)} s)`));ok(dur(4)>=12-FP_EPS&&dur(4)<12.6,`etapa 5 = 8 s no ODS + 4 s de visão geral (${dur(4).toFixed(1)} s)`);
 ok(dur(3)>15,'etapa 4 mais longa ('+dur(3).toFixed(1)+' s)');
 ok(maxJump<0.25,'sem teletransporte: salto máx por frame '+maxJump.toFixed(3));
 // parada no supermercado
