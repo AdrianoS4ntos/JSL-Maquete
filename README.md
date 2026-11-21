@@ -4,6 +4,8 @@
 
 🔗 **Demonstração ao vivo:** <https://adrianos4ntos.github.io/JSL-Maquete/>
 
+![QR Code da Maquete 3D](./qrcode-jsl.png)
+
 Maquete 3D que roda no navegador e mostra como quatro setores de uma operação de logística reversa se integram para atender a uma solicitação municipal de coleta e destinação de resíduos. Os setores são Diretoria / Investidores, Administrativo, Logística e Operações e JSL ODS (Organização e Desenvolvimento Sustentável).
 
 > **Aviso:** demonstração conceitual para fins acadêmicos. O "JSL ODS" é uma proposta de unidade de negócio, não uma divisão oficial da JSL. Pesos, frota e tempos da simulação são ilustrativos. Só os índices de reciclagem do painel final usam dados reais, com as fontes indicadas.
